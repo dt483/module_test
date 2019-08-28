@@ -39,6 +39,17 @@
 
 extern void* pll_handle;
 
+void _NM0_interrupt_handler (void) __attribute__((interrupt ("IRQ")));
+void _NM0_interrupt_handler (void)
+{
+
+	pll_enable_ramps(pll_handle);
+
+	module_ARMSC_clear_NMU_interrupt(ARMSC_INT_NMC0HP);
+	module_VIC_finishHandling();
+}
+
+
 void main (void) __attribute__ (( section (".text.main") ));
 void main (void)
 {
@@ -48,6 +59,7 @@ void main (void)
 
 
 	module_DIT_controller_t * timer1 = module_DIT_getInstance(TIMER_1);
+	module_VIC_set_interrupt_handler (NMC0HP, (void*) _NM0_interrupt_handler );
 
 	//for SPI output to X19 X20 on mc7601
 	//module_GPIO_SetDirection(module_GPIO7, module_GPIO_DIRECTION_OUTPUT);
@@ -92,18 +104,11 @@ void main (void)
 
 
 
-		//while ( module_GPIO_GetValue(PLL_MOD_PIN) ) {}
+		//module_DIT_Wait(timer1, TIME_BTWN_FRAMES_us, DIT_timeExp_microSeconds);
+
+		//module_DIT_Wait(timer1, CHIRP_TIME_us*NUM_OF_CHIRPS, DIT_timeExp_microSeconds);
 
 
-	//	pll_update_configuration(pll_handle);
-		pll_enable_ramps(pll_handle);
-
-		module_DIT_Wait(timer1, TIME_BTWN_FRAMES_us, DIT_timeExp_microSeconds);
-		pll_trigger_ramp();
-
-		module_DIT_Wait(timer1, CHIRP_TIME_us*NUM_OF_CHIRPS, DIT_timeExp_microSeconds);
-
-		pll_release_ramp_trigger();
 
 
 		//module_DIT_Wait(timer1, 1000, DIT_timeExp_microSeconds);
