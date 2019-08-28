@@ -1,0 +1,16 @@
+
+#Eclipse files
+/.settings/*
+.cproject
+.project
+
+# Build files
+/Debug/*
+/Release/*
+/Debug/
+
+#doxygen files:
+*.doxyfile
+*.doxyfile.*
+
+gdbscript
